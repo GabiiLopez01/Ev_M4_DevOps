@@ -1,17 +1,9 @@
-<<<<<<< HEAD
 name: HealthTrack CI/CD Pipeline
-=======
-name: CI/CD Pipeline
->>>>>>> 29dac05cc210a7a07e05f15da1d57bdc9f5469f2
 
 on: [push, pull_request]
 
 jobs:
-<<<<<<< HEAD
   unit-tests:
-=======
-  build:
->>>>>>> 29dac05cc210a7a07e05f15da1d57bdc9f5469f2
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -20,16 +12,11 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
-<<<<<<< HEAD
     
-=======
-        
->>>>>>> 29dac05cc210a7a07e05f15da1d57bdc9f5469f2
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-<<<<<<< HEAD
         pip install pytest
         
     - name: Run unit tests
@@ -37,7 +24,7 @@ jobs:
         if [ -d "tests/unit" ]; then
           pytest tests/unit/ -v
         else
-          echo "⚠️ No unit tests directory found"
+          echo "No unit tests directory found"
           exit 0
         fi
 
@@ -60,56 +47,18 @@ jobs:
     - name: Start Flask app
       run: |
         nohup python src/app.py > flask.log 2>&1 &
-        sleep 5  # Espera que la app inicie
+        sleep 5
         
     - name: Run functional tests
       run: |
         if [ -f "tests/functional/test_selenium.py" ]; then
           pytest tests/functional/ -v
         else
-          echo "⚠️ No functional tests found"
+          echo "No functional tests found"
           exit 0
         fi
         
-    - name: Get Flask logs (debug)
+    - name: Get Flask logs
       if: always()
       run: cat flask.log
 
-  performance-tests:
-    needs: functional-tests
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'
-    
-    - name: Install Locust
-      run: pip install locust
-        
-    - name: Run performance test
-      run: |
-        nohup python src/app.py > flask.log 2>&1 &
-        sleep 5
-        locust -f tests/performance/locustfile.py \
-          --host=http://localhost:5000 \
-          --headless \
-          --users 50 \
-          --spawn-rate 5 \
-          --run-time 2m \
-          --csv=perf_results
-          
-    - name: Upload performance results
-      uses: actions/upload-artifact@v3
-      with:
-        name: performance-results
-        path: perf_results*
-=======
-        
-    - name: Test with pytest
-      run: |
-        pytest tests/unit/ -v
-        pytest tests/functional/ -v
->>>>>>> 29dac05cc210a7a07e05f15da1d57bdc9f5469f2
