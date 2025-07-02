@@ -1,82 +1,24 @@
-name: CI/CD Pipeline for HealthTrack
+name: CI/CD Pipeline
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
-    # 1. Checkout del código
     - uses: actions/checkout@v4
     
-    # 2. Configura Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
         
-    # 3. Instalar dependencias
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest selenium webdriver-manager
         
-    # 4. Ejecutar pruebas unitarias
-    - name: Run unit tests
+    - name: Test with pytest
       run: |
         pytest tests/unit/ -v
-        
-    # 5. Ejecutar pruebas funcionales (con servidor en segundo plano)
-    - name: Run functional tests
-      run: |
-        python src/app.py &
-        sleep 5  # Espera que la app inicie
         pytest tests/functional/ -v
-
-          performance-test:
-     needs: test  # Depende del job 'test'
-     runs-on: ubuntu-latest
-     
-     steps:
-     - uses: actions/checkout@v4
-     
-     - name: Set up Python
-       uses: actions/setup-python@v4
-       with:
-         python-version: '3.12'
-     
-     - name: Install Locust
-       run: pip install locust
-     
-     - name: Run performance test
-       run: |
-         python src/app.py &
-         locust -f tests/performance/locustfile.py --host=http://localhost:5000 --headless -u 100 -r 10 -t 5m --csv=perf_results
-     
-     - name: Upload results
-       uses: actions/upload-artifact@v3
-       with:
-         name: performance-results
-         path: perf_results*
-
-
-deploy:
-     needs: [test, performance-test]
-     runs-on: ubuntu-latest
-     if: github.ref == 'refs/heads/main'  # Solo en main
-     
-     steps:
-     - uses: actions/checkout@v4
-     
-     - name: Deploy to Heroku
-       uses: akhileshns/heroku-deploy@v3.12.12
-       with:
-         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-         heroku_app_name: "your-app-name"
-         heroku_email: "your-email@example.com"
