@@ -1,13 +1,17 @@
+<<<<<<< HEAD
 name: HealthTrack CI/CD Pipeline
+=======
+name: CI/CD Pipeline
+>>>>>>> 29dac05cc210a7a07e05f15da1d57bdc9f5469f2
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
+<<<<<<< HEAD
   unit-tests:
+=======
+  build:
+>>>>>>> 29dac05cc210a7a07e05f15da1d57bdc9f5469f2
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -16,11 +20,16 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
+<<<<<<< HEAD
     
+=======
+        
+>>>>>>> 29dac05cc210a7a07e05f15da1d57bdc9f5469f2
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+<<<<<<< HEAD
         pip install pytest
         
     - name: Run unit tests
@@ -97,3 +106,10 @@ jobs:
       with:
         name: performance-results
         path: perf_results*
+=======
+        
+    - name: Test with pytest
+      run: |
+        pytest tests/unit/ -v
+        pytest tests/functional/ -v
+>>>>>>> 29dac05cc210a7a07e05f15da1d57bdc9f5469f2
